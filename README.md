@@ -6,4 +6,4 @@ reference image for use of glusterfs with btrfs
 
 # https://github.com/nds-cprm/glusterfs.refer.git
 
-Still no operational.
+Still in progress not operational.
