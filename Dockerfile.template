@@ -1,0 +1,34 @@
+# vim:set ft=dockerfile:
+# ? have gosu, libnss-wrapper, procps
+FROM debian:buster-slim
+# FROM debian:buster-slim
+ENV LANG C.UTF8
+
+# sane 1
+RUN mkdir -p /usr/share/man/man1
+
+RUN set -eux; \
+    apt update; \
+	apt upgrade -y ; \
+	apt install -y wget unzip zip
+
+# clean 
+RUN set -eux; \
+    apt autoremove -y ; \
+    apt clean -y ; \
+    rm -rf /var/lib/apt/lists/*
+
+#sane 2
+RUN rm -rf /usr/share/man/*
+
+#defaults
+
+WORKDIR /
+
+RUN mkdir -p /docker-entrypoint.d
+
+COPY docker-entrypoint.sh /
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+

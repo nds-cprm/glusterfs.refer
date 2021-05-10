@@ -1,0 +1,51 @@
+# vim:set ft=dockerfile:
+# ? have gosu, libnss-wrapper, procps
+FROM debian:buster-slim
+# FROM debian:buster-slim
+ENV LANG C.UTF8
+
+#ENV	DEBID=$(grep 'VERSION_ID=' /etc/os-release | cut -d '=' -f 2 | tr -d '"') 
+#ENV	DEBVER=$(grep 'VERSION=' /etc/os-release | grep -Eo '[a-z]+') 
+#ENV	DEBARCH=$(dpkg --print-architecture) 
+
+# sane 1
+RUN mkdir -p /usr/share/man/man1
+
+RUN set -eux; \
+    apt update; \
+	apt upgrade -y ; \
+	apt install -y wget zip unzip
+
+RUN ser -eux; \
+    apt install -y btrfs-progs openssh-client uuid
+
+RUN ser -eux; \
+	apt update ; \
+    apt install -y glusterfs-server glusterfs-client glusterfs-common
+
+RUN mkdir -p /glusters/{one,two,six,ten}/brick 
+
+VOLUME /glusters/one /glusters/two /glusters/six /glusters/ten
+
+# clean 
+RUN set -eux; \
+    apt autoremove -y ; \
+    apt clean -y ; \
+    rm -rf /var/lib/apt/lists/*
+
+#sane 2
+RUN rm -rf /usr/share/man/*
+
+#defaults
+
+WORKDIR /
+
+RUN mkdir -p /docker-entrypoint.d
+
+COPY startup.sh ./docker-entrypoint.d
+
+COPY docker-entrypoint.sh /
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+
